@@ -84,7 +84,44 @@ void imprime_arquivo(char *name) {
 }
 
 void leftOuterJoin(char *nome_arq_dept, char *nome_arq_funcionarios, char *nome_arq_join) {
-    //TODO: Implementar essa função
+    FILE *arqDept;
+    FILE *arqFunc;
+    FILE *arqJoin;
+    arqDept = fopen(nome_arq_dept, "r");
+    arqFunc = fopen(nome_arq_funcionarios, "r");
+    arqJoin = fopen(nome_arq_join, "w");
+    if(!arqDept||!arqFunc||!arqJoin){
+        printf("ERRO!");
+        return;
+    }
+    //Departamento
+    int codDep;
+    int salaDep;
+    char nomeDep[50];
+    
+    while(fscanf(arqDept, "%d;%d;%s", &codDep, &salaDep, nomeDep ) == 3){
+
+        //Funcionario
+        int contador = 0;
+        int codFun;
+        int codDepFun;
+        char nomeFun[50];
+        
+        while(fscanf(arqFunc, "%d;%d;%s", &codFun, &codDepFun, nomeFun) == 3){
+            if(codDep == codDepFun){
+                fprintf(arqJoin, "%d;%d;%s%d;%s\n", codDep, salaDep, nomeDep, codFun, nomeFun);
+                contador++;
+            }
+        }             
+        if (contador == 0){
+            fprintf(arqJoin, "%d;%d;%s%d;;\n", codDep, salaDep, nomeDep, 0);
+        }
+        fseek(arqFunc, 0, SEEK_SET);
+    }
+    fprintf(arqJoin, "&nbsp;");
+    fclose(arqDept);
+    fclose(arqFunc);
+    fclose(arqJoin);
 }
 
 int main() {
